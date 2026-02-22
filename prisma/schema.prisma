@@ -1,0 +1,201 @@
+// Prisma schema for BSC Nexus V2 - API Key Management & Multi-Tenancy
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tenant/Organization model - Enhanced for V2
+model Tenant {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  
+  // Contact & billing info
+  email       String?
+  billingEmail String?
+  
+  // Tenant tier and limits
+  tier        TenantTier @default(FREE)
+  status      TenantStatus @default(ACTIVE)
+  
+  // Rate limits (can override system defaults)
+  maxApiKeys       Int?     // Max API keys allowed for this tenant
+  maxRequestsPerDay Int?    // Daily request limit
+  
+  // Timestamps
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deactivatedAt DateTime?
+  
+  // Relations
+  apiKeys     ApiKey[]
+  auditLogs   AuditLog[]
+  
+  @@index([status])
+  @@index([tier])
+}
+
+// API Key model - Enhanced for V2
+model ApiKey {
+  id                 String    @id @default(uuid())
+  key                String    @unique
+  label              String?
+  tenantId           String
+  
+  // Status management
+  isActive           Boolean   @default(true)
+  deactivatedAt      DateTime?
+  deactivatedReason  String?
+  
+  // Rate limiting (null = use tenant defaults)
+  rateLimitPerMinute Int?
+  rateLimitPerHour   Int?
+  rateLimitPerDay    Int?
+  
+  // Access control
+  scopes             ApiKeyScope[] // What endpoints/methods this key can access
+  allowedIps         String[]      // IP allowlist (empty = allow all)
+  
+  // Expiration
+  expiresAt          DateTime?
+  
+  // Usage tracking
+  lastUsedAt         DateTime?
+  totalRequests      Int       @default(0)
+  
+  // Metadata
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  createdBy          String?   // Admin ID who created the key
+  
+  // Relations
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  usages   ApiUsage[]
+  
+  @@index([tenantId])
+  @@index([isActive])
+  @@index([expiresAt])
+  @@index([lastUsedAt])
+}
+
+// API Usage tracking - Enhanced for V2
+model ApiUsage {
+  id         String   @id @default(uuid())
+  apiKeyId   String
+  
+  // Request details
+  endpoint   String
+  method     String?
+  path       String?
+  
+  // Response details
+  statusCode Int
+  latencyMs  Int
+  errorCode  String?  // Structured error code if failed
+  errorMessage String?
+  
+  // Client info
+  clientIp   String?
+  userAgent  String?
+  
+  // Cost tracking for billing
+  costEstimate Decimal? @db.Decimal(10, 6) // Estimated cost in USD
+  
+  // Timestamps
+  timestamp  DateTime @default(now())
+  
+  // Relations
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id])
+  
+  @@index([apiKeyId, timestamp])
+  @@index([timestamp])
+  @@index([endpoint])
+  @@index([statusCode])
+}
+
+// Audit log for admin actions - New in V2
+model AuditLog {
+  id          String   @id @default(uuid())
+  
+  // Who performed the action
+  adminId     String?
+  adminEmail  String?
+  
+  // What was affected
+  tenantId    String?
+  apiKeyId    String?
+  
+  // Action details
+  action      AuditAction
+  resource    AuditResource
+  resourceId  String?
+  
+  // Before/after state (for changes)
+  previousValue Json?
+  newValue      Json?
+  
+  // Context
+  ipAddress   String?
+  userAgent   String?
+  
+  // Timestamp
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+  
+  @@index([tenantId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([adminId])
+}
+
+// Enums
+enum TenantTier {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+  CUSTOM
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+  DEACTIVATED
+}
+
+enum ApiKeyScope {
+  RPC_READ
+  RPC_WRITE
+  SWAP
+  ADMIN_READ
+  ADMIN_WRITE
+  MEV_PROTECTION
+  ANALYTICS
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  ACTIVATE
+  DEACTIVATE
+  ROTATE
+  VIEW
+  EXPORT
+}
+
+enum AuditResource {
+  TENANT
+  API_KEY
+  USAGE_DATA
+  CONFIG
+  BILLING
+}

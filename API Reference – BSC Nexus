@@ -1,0 +1,177 @@
+1. Overview
+
+The BSC Nexus backend exposes a series of REST and JSON-RPC endpoints used for infrastructure monitoring and blockchain data access.
+This reference defines the currently implemented routes, expected payloads, and response formats.
+
+Base URL examples:
+
+Environment	URL
+Local	http://localhost:3000
+GitHub Codespaces	https://potential-telegram-g4454grx77rw3x9x.github.dev
+Replit (example)	https://bsc-nexus.repl.co
+
+All endpoints use JSON responses and follow standard HTTP status codes.
+
+2. /health – Service Health Check
+Method
+GET /health
+
+Description
+
+Verifies that the backend is operational.
+Used by QA tests and monitoring tools to confirm basic service uptime.
+
+Example Request
+curl https://bsc-nexus.repl.co/health
+
+Example Response
+{
+  "status": "ok",
+  "message": "Mock BSC Nexus backend is healthy ✅"
+}
+
+Response Codes
+Code	Meaning
+200 OK	Service operational
+500 Internal Server Error	Backend unavailable
+3. /rpc – JSON-RPC Proxy
+Method
+POST /rpc
+
+Description
+
+Accepts JSON-RPC 2.0 requests and forwards them to the configured Binance Smart Chain node.
+Used to validate request formatting and connection stability.
+
+Example Request
+curl -X POST https://bsc-nexus.repl.co/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+        "jsonrpc": "2.0",
+        "method": "eth_blockNumber",
+        "params": [],
+        "id": 1
+      }'
+
+Example Response
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": "0x135f24a"
+}
+
+Response Codes
+Code	Meaning
+200 OK	Valid response from upstream RPC
+400 Bad Request	Invalid JSON-RPC format
+502 Bad Gateway	Upstream RPC node unreachable
+4. /tokens – Token Information (Planned)
+Method
+POST /tokens
+
+Description
+
+Retrieves token information from the Binance Smart Chain using eth_call.
+Queries standard BEP-20 functions such as name, symbol, decimals, and totalSupply.
+
+Example Request
+curl -X POST https://bsc-nexus.repl.co/tokens \
+  -H "Content-Type: application/json" \
+  -d '{
+        "address": "0xYourTokenAddress"
+      }'
+
+Example Response
+{
+  "name": "SampleToken",
+  "symbol": "STK",
+  "decimals": 18,
+  "totalSupply": "1000000000000000000000000"
+}
+
+Response Codes
+Code	Meaning
+200 OK	Token data successfully retrieved
+404 Not Found	Contract address invalid or unreachable
+500 Internal Server Error	RPC error during query
+5. /webhooks – Webhook Listener (Planned)
+Method
+POST /webhooks
+
+Description
+
+Receives event notifications from external services or on-chain triggers.
+Planned for integration with future real-time monitoring features.
+
+6. WebSocket Endpoint
+URL
+wss://bsc-nexus.repl.co
+
+Description
+
+Real-time connection for event streaming and RPC subscription testing.
+Supports basic eth_subscribe and eth_unsubscribe requests in JSON-RPC 2.0 format.
+
+Example Payload
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "eth_subscribe",
+  "params": ["newHeads"]
+}
+
+7. Error Format
+
+All errors follow a consistent structure:
+
+{
+  "error": {
+    "code": 400,
+    "message": "Invalid JSON-RPC request format",
+    "details": "Missing required 'method' field"
+  }
+}
+
+8. Environment Configuration
+
+Environment variables define how requests are routed and which blockchain node is used.
+
+Variable	Description
+SERVER_URL	Base URL of the backend API
+WS_URL	WebSocket endpoint for streaming
+DATABASE_URL	Optional PostgreSQL connection string
+BSC_RPC_URL	Upstream RPC provider (Mainnet or Testnet)
+
+Example .env:
+
+SERVER_URL=https://bsc-nexus.repl.co
+WS_URL=wss://bsc-nexus.repl.co
+DATABASE_URL=postgres://user:password@localhost:5432/bsc_nexus
+BSC_RPC_URL=https://bsc-dataseed.binance.org
+
+9. Testing Endpoints
+
+You can test all endpoints manually using curl, Postman, or by running the automated suite:
+
+npm test
+
+
+Output example:
+
+Total Tests:  4
+Passed:       4 (100.0%)
+Failed:       0 (0.0%)
+Duration:     0.47s
+
+
+The QA report will be generated as test-report.html.
+
+10. Version Information
+Version	Date	Notes
+v1.0.0	November 2025	Initial release with /health, /rpc, and QA framework.
+
+Maintainer:
+Gorkhmaz Beydullayev
+Lyon, France – 2025
+
+Repository: https://github.com/grkhmz23/BSC-Nexus

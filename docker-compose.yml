@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bsc_nexus
+      POSTGRES_USER: bscnexus
+      POSTGRES_PASSWORD: secretpassword
+    ports:
+      - "5432:5432" # For local development; remove/lock down in production
+    volumes:
+      - bsc_nexus_db_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://bscnexus:secretpassword@db:5432/bsc_nexus
+      BSC_PRIMARY_RPC_URL: https://bsc-dataseed.binance.org
+      BSC_FALLBACK_RPC_URLS: https://bsc-dataseed1.defibit.io,https://bsc-dataseed1.ninicoin.io
+      ADMIN_TOKEN: change-me-in-production
+      METRICS_ENABLED: "true"
+    ports:
+      - "3000:3000"
+    # For production use, inject secrets via a secure secret manager or compose overrides
+
+volumes:
+  bsc_nexus_db_data:

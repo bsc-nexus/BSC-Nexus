@@ -1,0 +1,161 @@
+1. Purpose
+
+This guide explains how developers can connect their own smart contracts or backend services to BSC Nexus for infrastructure testing and quality assurance.
+The goal is to help you verify RPC connectivity, token queries, and API reliability before launching on Binance Smart Chain (BSC) Mainnet.
+
+Repository: https://github.com/grkhmz23/BSC-Nexus
+
+2. Prerequisites
+Requirement	Version	Notes
+Node.js	18 or higher	Required for running tests
+npm	9 or higher	Package manager
+Git	Latest	For cloning the repository
+A deployed contract	Optional	On BSC Mainnet or Testnet
+3. Setup
+3.1 Clone the repository
+git clone https://github.com/grkhmz23/BSC-Nexus.git
+cd BSC-Nexus
+npm install
+
+3.2 Configure environment
+
+Create a .env file with your details:
+
+SERVER_URL=https://your-backend-url.com
+WS_URL=wss://your-backend-url.com
+DATABASE_URL=postgres://user:password@localhost:5432/bsc_nexus
+BSC_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545/
+
+
+If you want to test on Mainnet:
+
+BSC_RPC_URL=https://bsc-dataseed.binance.org
+
+4. Running the QA suite
+Start the mock backend
+node mock-server.mjs
+
+Run the tests
+npm test
+
+
+When complete, open the generated report:
+
+test-report.html
+
+5. Connecting your own smart contract
+
+You can create a new test file (for example tests/contract.ts) to query your deployed contract directly.
+
+Example: Verify totalSupply and owner address
+import axios from "axios";
+import { TestResult } from "../types.js";
+
+export async function testMyContract(config): Promise<TestResult[]> {
+  const start = Date.now();
+  const contract = "0xYourContractAddress";
+  const dataTotalSupply = "0x18160ddd"; // totalSupply()
+  const dataOwner = "0x8da5cb5b";      // owner()
+
+  try {
+    const rpc = config.bscRpcUrl;
+
+    const [supply, owner] = await Promise.all([
+      axios.post(rpc, { jsonrpc: "2.0", method: "eth_call", params: [{ to: contract, data: dataTotalSupply }, "latest"], id: 1 }),
+      axios.post(rpc, { jsonrpc: "2.0", method: "eth_call", params: [{ to: contract, data: dataOwner }, "latest"], id: 2 })
+    ]);
+
+    const results: TestResult[] = [
+      {
+        name: "Contract totalSupply",
+        passed: !!supply.data.result,
+        duration: Date.now() - start,
+        details: `totalSupply: ${supply.data.result}`,
+      },
+      {
+        name: "Contract owner()",
+        passed: !!owner.data.result,
+        duration: Date.now() - start,
+        details: `owner: ${owner.data.result}`,
+      },
+    ];
+
+    return results;
+  } catch (error: any) {
+    return [{
+      name: "Contract Integration Test",
+      passed: false,
+      duration: Date.now() - start,
+      error: error.message,
+      suggestion: "Verify RPC URL and contract address."
+    }];
+  }
+}
+
+
+Then register it inside test-runner.ts:
+
+import { testMyContract } from "./tests/contract.js";
+
+const testSuites = [
+  { name: "Health Checks", fn: () => testHealth(config) },
+  { name: "RPC Proxy", fn: () => testRPC(config) },
+  { name: "My Contract", fn: () => testMyContract(config) },
+];
+
+
+Re-run:
+
+npm test
+
+
+Your report will include the new contract results.
+
+6. Testing without deployment
+
+You can also test infrastructure without deploying a contract by:
+
+Using the mock backend (mock-server.mjs)
+
+Calling public BSC nodes through the QA suite
+
+Simulating responses with JSON-RPC payloads
+
+This validates RPC formatting, connection stability, and backend routing before actual deployment.
+
+7. Switching between networks
+Network	RPC URL	Purpose
+BSC Testnet	https://data-seed-prebsc-1-s1.binance.org:8545/	Safe testing; no real funds
+BSC Mainnet	https://bsc-dataseed.binance.org	Live network; real tokens
+
+Switch by editing BSC_RPC_URL in your .env file.
+
+8. Common Errors and Fixes
+Issue	Cause	Resolution
+Timeout or “Network Error”	RPC node unavailable	Switch to another RPC URL
+result: null from eth_call	Wrong method or contract	Verify function selectors and address
+“Cannot read property of undefined”	Missing .env variable	Check configuration values
+Health check fails	Server not running	Start mock-server.mjs first
+9. Best Practices
+
+Always test on BSC Testnet before deploying to Mainnet.
+
+Keep .env variables private; never commit secrets.
+
+Save the latest test-report.html to track QA results over time.
+
+Add your new tests to version control to maintain traceability.
+
+10. Next Steps
+
+Extend test coverage for events, transactions, and token transfers.
+
+Integrate the QA suite into your CI/CD pipeline.
+
+Deploy a live Nexus instance to act as your RPC monitoring service.
+
+Maintainer:
+Gorkhmaz Beydullayev
+Lyon, France – 2025
+
+Repository: https://github.com/grkhmz23/BSC-Nexus

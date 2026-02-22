@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BSC Nexus Test Report</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 24px; background: #0b0b10; color: #f5f5f5; }
+    h1 { margin-bottom: 0; }
+    .summary { margin: 12px 0 24px; }
+    .summary span { margin-right: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid #333; font-size: 14px; }
+    th { background: #151520; text-align: left; }
+    tr:nth-child(even) { background: #14141c; }
+    tr:nth-child(odd) { background: #101018; }
+    .passed { color: #3fcf8e; }
+    .failed { color: #ff5573; }
+  </style>
+</head>
+<body>
+  <h1>BSC Nexus QA Report</h1>
+  <div class="summary">
+    <span>Total: <strong>79</strong></span>
+    <span class="passed">Passed: <strong>76</strong></span>
+    <span class="failed">Failed: <strong>3</strong></span>
+    <span>Duration: <strong>330 ms</strong></span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Test</th>
+        <th>Status</th>
+        <th>Duration</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td>API Keys</td>
+        <td>Create API key persists record</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">1 ms</td>
+        <td>createApiKey returns generated key and tenant association</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Keys</td>
+        <td>Retrieve API key by value</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>getApiKeyByValue returns stored key</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Keys</td>
+        <td>Deactivate API key flag is set</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>deactivateApiKey sets isActive=false</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Keys</td>
+        <td>List API keys returns created keys</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>listApiKeys mirrors mock storage contents</td>
+      </tr>
+    
+
+      <tr>
+        <td>Usage Logger</td>
+        <td>Usage Logger suite error</td>
+        <td style="text-align:center;">❌</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>TypeError: Cannot read properties of undefined (reading &#39;user-agent&#39;)
+    at EventEmitter.&lt;anonymous&gt; (/workspaces/bsc-nexus/src/server/middleware/usageLogger.ts:20:27)
+    at EventEmitter.emit (node:events:508:28)
+    at testUsageLogger (/workspaces/bsc-nexus/tests/usage-logger.unit.ts:53:7)
+    at Object.fn (/workspaces/bsc-nexus/tests/test-runner.ts:39:39)
+    at runAllTests (/workspaces/bsc-nexus/tests/test-runner.ts:60:35)</td>
+      </tr>
+    
+
+      <tr>
+        <td>Rate Limiting</td>
+        <td>Allows requests until limit is reached</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Remaining after third request: 0</td>
+      </tr>
+    
+
+      <tr>
+        <td>Rate Limiting</td>
+        <td>Counters reset when window rolls over</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Reset at: 2026-02-19T12:09:00.000Z</td>
+      </tr>
+    
+
+      <tr>
+        <td>Rate Limiting</td>
+        <td>Custom API key limit overrides default</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Effective limit: 10</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Routing</td>
+        <td>RPC proxy retries on failed primary endpoint</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Attempts: http://primary-rpc,http://secondary-rpc</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Routing</td>
+        <td>MEV protection hooks transaction submissions</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>MEV service intercepted eth_sendRawTransaction</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Routing</td>
+        <td>MEV protection can be skipped via flag</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Skip flag bypassed MEV and executed normal routing</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Circuit breaker opens after failures</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">1 ms</td>
+        <td>Opened after 3 failures</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Circuit breaker blocks when OPEN</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Correctly rejected request</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Cache stores and retrieves values</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">1 ms</td>
+        <td>Cache hit with correct data</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Cache respects TTL expiration</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">11 ms</td>
+        <td>Expired entry not returned</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Cache tracks hit/miss statistics</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">1 ms</td>
+        <td>Hits: 1, Misses: 1, Hit Rate: 50.0%</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Proxy v2 reports endpoint health</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>1 endpoints monitored</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Proxy v2 exposes detailed statistics</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>1 endpoints, cache hits: 1</td>
+      </tr>
+    
+
+      <tr>
+        <td>RPC Proxy v2</td>
+        <td>Cache generates consistent keys</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Same params = same key, different params = different key</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>MEV Protection v2 initializes correctly</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>3 providers available: flashbots, eden, merkle</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>MEV Detection Engine recognizes DEX transactions</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">3 ms</td>
+        <td>Service has detection capabilities</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Provider statistics tracked correctly</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Stats available for 3 providers</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Provider enable/disable works</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Provider toggled: 3 → 2 → 3</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Handles invalid transactions gracefully</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Invalid transaction rejected correctly</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Multiple MEV providers configured</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Providers: flashbots, eden, merkle</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Service status includes all required metrics</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Submitted: 0, Succeeded: 0</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Flashbots provider configured</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Flashbots Protect available</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>DEX Registry covers all major BSC DEXs</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>14 DEXs, 16 unique signatures, ~99.5% volume coverage</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Detects PancakeSwap V2 transactions</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">1 ms</td>
+        <td>Detected PancakeSwap V2 (60% market share)</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Detects PancakeSwap V3 transactions</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Detected PancakeSwap V3 (15% market share)</td>
+      </tr>
+    
+
+      <tr>
+        <td>MEV Protection v2</td>
+        <td>Service status includes DEX coverage metrics</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>14 DEXs covering 98.1% of market</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Ultra-Fast Swap v2 initializes correctly</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>14 DEXs supported</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Generates valid swap quote</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">109 ms</td>
+        <td>Best route: Multi-hop via 0xe9e7..., Output: 1034285000000000000</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Quote includes alternative routes</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">16 ms</td>
+        <td>3 alternative routes found</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Slippage protection calculates correct minimum output</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">17 ms</td>
+        <td>Output: 1044484000000000000, Min: 1034039160000000000 (slippage: 1%)</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Calculates price impact for large trades</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">27 ms</td>
+        <td>Price impact: 0.21%, Warnings: 1</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Best route has valid route type</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">16 ms</td>
+        <td>Route type: multi-hop</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Provides gas estimation</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">16 ms</td>
+        <td>Gas estimate: 289820, Network fees: 0</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Quote has valid expiration time</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">24 ms</td>
+        <td>Expires at: 2026-02-19T12:27:42.077Z</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>MEV protection flag is set correctly</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">32 ms</td>
+        <td>With MEV: true, Without MEV: false</td>
+      </tr>
+    
+
+      <tr>
+        <td>Ultra-Fast Swap v2</td>
+        <td>Service reports correct status</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Enabled: true, DEXs: 14</td>
+      </tr>
+    
+
+      <tr>
+        <td>Health Service</td>
+        <td>Metrics service returns Prometheus format</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">4 ms</td>
+        <td>Prometheus metrics generated successfully</td>
+      </tr>
+    
+
+      <tr>
+        <td>Health Service</td>
+        <td>Health check configuration is valid</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Port: 3000, Env: development, MEV: false</td>
+      </tr>
+    
+
+      <tr>
+        <td>Token Service</td>
+        <td>Token info has valid structure</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>BUSD: BUSD Token (18 decimals)</td>
+      </tr>
+    
+
+      <tr>
+        <td>Token Service</td>
+        <td>Token address normalization works</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Normalized: 0xe9e7cea3dedca5984780bafc599bd69add087d56</td>
+      </tr>
+    
+
+      <tr>
+        <td>Token Service</td>
+        <td>Multiple tokens have required fields</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Validated 2 tokens</td>
+      </tr>
+    
+
+      <tr>
+        <td>Security</td>
+        <td>Admin middleware rejects missing token</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Returns 401 when token is missing</td>
+      </tr>
+    
+
+      <tr>
+        <td>Security</td>
+        <td>Admin middleware rejects invalid token</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">1 ms</td>
+        <td>Returns 401 for invalid token</td>
+      </tr>
+    
+
+      <tr>
+        <td>Security</td>
+        <td>Admin middleware accepts valid token</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Calls next() for valid token</td>
+      </tr>
+    
+
+      <tr>
+        <td>Security</td>
+        <td>API key middleware rejects missing key</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Returns 401 with proper error code</td>
+      </tr>
+    
+
+      <tr>
+        <td>Security</td>
+        <td>API key middleware rejects invalid key</td>
+        <td style="text-align:center;">❌</td>
+        <td style="text-align:right;">26 ms</td>
+        <td>Status: 500, Code: -32603</td>
+      </tr>
+    
+
+      <tr>
+        <td>Security</td>
+        <td>API key middleware accepts valid key</td>
+        <td style="text-align:center;">❌</td>
+        <td style="text-align:right;">9 ms</td>
+        <td>Did not call next() or set context</td>
+      </tr>
+    
+
+      <tr>
+        <td>Tenant Management V2</td>
+        <td>Create tenant with tier</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Created tenant mock-1 with tier PROFESSIONAL</td>
+      </tr>
+    
+
+      <tr>
+        <td>Tenant Management V2</td>
+        <td>Tenant tier limits enforced</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>FREE tier limited to 2 API keys</td>
+      </tr>
+    
+
+      <tr>
+        <td>Tenant Management V2</td>
+        <td>Suspend tenant deactivates all keys</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Tenant mock-3 suspended</td>
+      </tr>
+    
+
+      <tr>
+        <td>Tenant Management V2</td>
+        <td>List tenants with status filter</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Found 2 active tenants</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key V2</td>
+        <td>Create API key with scopes</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Created key with scopes: RPC_READ, RPC_WRITE, SWAP</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key V2</td>
+        <td>Create API key with IP allowlist</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key restricted to IPs: 192.168.1.1, 10.0.0.0/8</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key V2</td>
+        <td>Create API key with expiration</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key expires at 2026-03-21T12:07:42.150Z</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key V2</td>
+        <td>API key has prefix for display</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key prefix: bsc_mock, Full key starts with: bsc_mock-1...</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key V2</td>
+        <td>Activate/deactivate API key</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key deactivated successfully</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key V2</td>
+        <td>Rotate API key generates new key value</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key rotated from bsc_mock-16... to bsc_rotated_moc...</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key Validation</td>
+        <td>Validate active API key</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key validated successfully</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key Validation</td>
+        <td>Reject inactive API key</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Inactive key correctly rejected</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key Validation</td>
+        <td>Reject expired API key</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Expired key (expired 2026-02-18T12:07:42.151Z) correctly rejected</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key Validation</td>
+        <td>IP allowlist permits allowed IP</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>IP 192.168.1.100 allowed for key</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key Validation</td>
+        <td>IP allowlist blocks unauthorized IP</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>IP 10.0.0.50 correctly blocked</td>
+      </tr>
+    
+
+      <tr>
+        <td>API Key Validation</td>
+        <td>Suspended tenant blocks all keys</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key from suspended tenant correctly rejected</td>
+      </tr>
+    
+
+      <tr>
+        <td>Scope Validation</td>
+        <td>Check single scope on API key</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key has SWAP scope</td>
+      </tr>
+    
+
+      <tr>
+        <td>Scope Validation</td>
+        <td>Check multiple required scopes (all)</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key has all required scopes: RPC_READ, SWAP</td>
+      </tr>
+    
+
+      <tr>
+        <td>Scope Validation</td>
+        <td>Reject missing required scope</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key correctly lacks ADMIN_WRITE scope</td>
+      </tr>
+    
+
+      <tr>
+        <td>Audit Logging</td>
+        <td>Audit log tenant creation</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Logged 1 events for tenant</td>
+      </tr>
+    
+
+      <tr>
+        <td>Audit Logging</td>
+        <td>Audit log API key operations</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Logged 2 API key operations</td>
+      </tr>
+    
+
+      <tr>
+        <td>Audit Logging</td>
+        <td>Query audit logs with action filter</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Found 2 CREATE events</td>
+      </tr>
+    
+
+      <tr>
+        <td>Audit Logging</td>
+        <td>Audit log has required fields</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Log has id=true, action=CREATE, resource=TENANT</td>
+      </tr>
+    
+
+      <tr>
+        <td>Analytics</td>
+        <td>Tenant stats include required fields</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Stats: 15000 requests, 5 keys</td>
+      </tr>
+    
+
+      <tr>
+        <td>Analytics</td>
+        <td>API key stats tracking</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Key stats: 5000 total, 150 today</td>
+      </tr>
+    
+
+      <tr>
+        <td>Analytics</td>
+        <td>Dashboard summary structure</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Dashboard: 10 tenants, 17 keys</td>
+      </tr>
+    
+
+      <tr>
+        <td>Analytics</td>
+        <td>Billing report structure</td>
+        <td style="text-align:center;">✅</td>
+        <td style="text-align:right;">0 ms</td>
+        <td>Billing: $10 subtotal, $11 total</td>
+      </tr>
+    
+    </tbody>
+  </table>
+</body>
+</html>

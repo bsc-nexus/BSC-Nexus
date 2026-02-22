@@ -1,0 +1,56 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test on Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install
+      run: npm ci
+    
+    - name: Build
+      run: npm run build
+    
+    - name: Configure
+      run: |
+        cat > .env << 'EOF'
+        PORT=3000
+        UPSTREAM_RPC_URL=https://bsc-dataseed.binance.org
+        ADMIN_TOKEN=test-admin-token
+        NODE_ENV=development
+        EOF
+    
+    - name: Start Server
+      run: |
+        npm start &
+        echo $! > server.pid
+        sleep 10
+        curl http://localhost:3000/health
+    
+    - name: Run Tests
+      run: npm test
+      env:
+        SERVER_URL: http://localhost:3000
+        API_KEY: dev-key-123
+    
+    - name: Cleanup
+      if: always()
+      run: kill $(cat server.pid) || true

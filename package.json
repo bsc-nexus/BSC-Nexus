@@ -1,0 +1,60 @@
+{
+  "name": "bsc-nexus",
+  "version": "1.0.0",
+  "description": "Enterprise BSC RPC Infrastructure with Anti-MEV Protection",
+  "main": "dist/server/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server/server.ts",
+    "build": "tsc",
+    "start": "node dist/server/server.js",
+    "test": "tsx tests/test-runner.ts",
+    "validate": "node validate.mjs",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "start:dev": "tsx src/server/server.ts"
+  },
+  "keywords": [
+    "bsc",
+    "binance-smart-chain",
+    "rpc",
+    "blockchain",
+    "ethereum",
+    "anti-mev",
+    "infrastructure"
+  ],
+  "author": "Gorkhmaz Beydullayev",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "axios": "^1.13.2",
+    "chalk": "^5.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.9.3",
+    "pg": "^8.16.3",
+    "prom-client": "^15.1.0",
+    "web3": "^4.16.0",
+    "winston": "^3.17.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.19.0",
+    "@types/pg": "^8.15.6",
+    "@types/ws": "^8.18.1",
+    "prisma": "^5.22.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
